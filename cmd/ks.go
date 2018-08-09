@@ -33,6 +33,7 @@ func newRootCmd(args []string) *cobra.Command {
 		newVersionCmd(out),
 		newContextCmd(out),
 		newNamespaceCmd(out),
+		newCurrentNamespaceCmd(out),
 	)
 
 	flags.Parse(args)

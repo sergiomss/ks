@@ -8,12 +8,12 @@ import (
 )
 
 func SwitchNamespace() error {
-	ctx, err := getCurrentContext()
+	ctx, err := GetCurrentContext()
 	if err != nil {
 		return fmt.Errorf("failed to get current namespace: %v", err)
 	}
 
-	curr, err := getCurrentNamespace(ctx)
+	curr, err := GetCurrentNamespace(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to switch namespace: %v", err)
 	}
@@ -68,7 +68,7 @@ func changeCurrentNamespace(ctx, ns string) (string, error) {
 	return extractResult(exec.Command("kubectl", "config", "set-context", ctx, namespace))
 }
 
-func getCurrentNamespace(context string) (string, error) {
+func GetCurrentNamespace(context string) (string, error) {
 	jp := fmt.Sprintf("jsonpath='{.contexts[?(@.name == %q)].context.namespace}'", context)
 	return extractResult(exec.Command("kubectl", "config", "view", "-o", jp))
 }

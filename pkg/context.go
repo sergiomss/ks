@@ -8,7 +8,7 @@ import (
 	"gopkg.in/AlecAivazis/survey.v1"
 )
 func SwitchContext() error {
-	curr, err := getCurrentContext()
+	curr, err := GetCurrentContext()
 	if err != nil {
 		return fmt.Errorf("failed to switch context: %v", err)
 	}
@@ -62,7 +62,7 @@ func changeCurrentContext(ctx string) (string, error) {
 	return extractResult(exec.Command("kubectl", "config", "use-context", ctx))
 }
 
-func getCurrentContext() (string, error) {
+func GetCurrentContext() (string, error) {
 	return extractResult(exec.Command("kubectl", "config", "view", "-o", "jsonpath={.current-context}"))
 }
 
