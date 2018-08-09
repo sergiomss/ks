@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	ks "github.com/majestic-fox/ks/pkg"
 	"fmt"
+	"strings"
 )
 
 type currentNamespaceCmd struct {
@@ -36,7 +37,7 @@ func (cns *currentNamespaceCmd) run() error {
 	if err != nil {
 		fmt.Print("☠️")
 	}
-	fmt.Print(ns)
+	fmt.Print(strings.Trim(ns, "'"))
 	return nil
 }
 
