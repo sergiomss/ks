@@ -43,6 +43,7 @@ func promptUserContext(current string, opts []string) (string, error) {
 				Message: "Choose a kubecontext:",
 				Options: opts,
 				Default: current,
+				PageSize: len(opts),
 			},
 		},
 	}

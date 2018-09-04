@@ -48,6 +48,7 @@ func promptUserNamespace(current string, opts []string) (string, error) {
 				Message: "Choose a namespace:",
 				Options: opts,
 				Default: current,
+				PageSize: len(opts),
 			},
 		},
 	}
