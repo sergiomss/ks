@@ -10,4 +10,5 @@ build:
 
 release:
 	go get github.com/mitchellh/gox
-	CGO_ENABLED=0 gox -output "dist/$(NAME)_{{.OS}}_{{.Arch}}" -ldflags $(LD_FLAGS) -arch "amd64" -os "linux windows darwin" $(shell go list ./... | grep -v '/vendor/')
+	CGO_ENABLED=1 gox -output "dist/$(NAME)_{{.OS}}_{{.Arch}}" -ldflags $(LD_FLAGS) -arch "amd64" -os "linux windows darwin" $(shell go list ./... | grep -v '/vendor/')
+	shasum -a 256 dist/ks_darwin_amd64
