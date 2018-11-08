@@ -16,7 +16,7 @@ func newVersionCmd(out io.Writer) *cobra.Command {
 	version := &versionCmd{out: out}
 	cmd := &cobra.Command{
 		Use:   "version",
-		Short: "",
+		Short: "Get ks's current version and build date",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if err := version.run(); err != nil {
 				return err
@@ -34,4 +34,3 @@ func (v *versionCmd) run() error {
 	fmt.Fprintln(v.out, table)
 	return nil
 }
-
