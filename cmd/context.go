@@ -9,6 +9,7 @@ import (
 	"gopkg.in/AlecAivazis/survey.v1"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
+	"sort"
 )
 
 type contextCmd struct {
@@ -87,5 +88,6 @@ func contexts(config *clientcmdapi.Config) []string {
 	for name := range config.Contexts {
 		list = append(list, name)
 	}
+	sort.Strings(list)
 	return list
 }

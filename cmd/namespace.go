@@ -4,6 +4,7 @@ import (
 	"io"
 	"fmt"
 	"path/filepath"
+	"sort"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -68,6 +69,8 @@ func (ns *namespaceCmd) run() (error) {
 	}
 
 	namespaces := getNamespaceNames(namespaceList)
+	sort.Strings(namespaces)
+
 	ns.namespace, err = usecli.Prompt(
 		&survey.Select{
 			Message:  "Choose a namespace: ",

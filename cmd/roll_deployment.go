@@ -3,6 +3,7 @@ package cmd
 import (
 	"io"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 	"os/user"
@@ -76,6 +77,7 @@ func (rd *rollDeployCmd) run() (error) {
 		fmt.Fprintln(rd.out, "There are no deployments in the current namespace")
 		return nil
 	}
+	sort.Strings(deployments)
 
 	rd.deployName, err = usecli.Prompt(
 		&survey.Select{
@@ -124,8 +126,6 @@ func (rd *rollDeployCmd) run() (error) {
 		return fmt.Errorf("update failed: %v", retryErr)
 	}
 	fmt.Println("Updated deployment...")
-
-	return nil
 
 	return nil
 }
