@@ -88,7 +88,7 @@ func (ns *namespaceCmd) run() (error) {
 		return err
 	}
 
-	fmt.Fprintf(ns.out, "successfully switched to namespace: %v", ns.namespace)
+	fmt.Fprintf(ns.out, "Successfully switched to namespace: %v\n", ns.namespace)
 	return nil
 }
 

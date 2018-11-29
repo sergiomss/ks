@@ -65,7 +65,7 @@ func (ctx *contextCmd) run() error {
 		return err
 	}
 
-	fmt.Fprintf(ctx.out, "successfully switched to context: %v", ctx.contextName)
+	fmt.Fprintf(ctx.out, "Successfully switched to context: %v\n", ctx.contextName)
 	return nil
 }
 
