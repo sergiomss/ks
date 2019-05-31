@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"github.com/majestic-fox/ks/pkg/user"
+	"github.com/sergiomss/ks/pkg/user"
 	"github.com/spf13/cobra"
 	"gopkg.in/AlecAivazis/survey.v1"
 	"k8s.io/client-go/tools/clientcmd"

@@ -1,6 +1,6 @@
 package main
 
-import "github.com/majestic-fox/ks/cmd"
+import "github.com/sergiomss/ks/cmd"
 
 var (
 	Version   string

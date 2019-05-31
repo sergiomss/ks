@@ -9,7 +9,7 @@ import (
 	"os/user"
 	"path/filepath"
 
-	usecli "github.com/majestic-fox/ks/pkg/user"
+	usecli "github.com/sergiomss/ks/pkg/user"
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
