@@ -65,6 +65,15 @@ func (ctx *contextCmd) run() error {
 		return err
 	}
 
+	ns, err := getCurrentNamespace(clientcmd.NewDefaultPathOptions())
+	if err != nil {
+		return fmt.Errorf("failed to get current namespace: %v", err)
+	}
+	
+	if err := setTillerNamespace(ns); err != nil {
+		return fmt.Errorf("failed to set tiller namespace: %v", err)
+	}
+
 	fmt.Fprintf(ctx.out, "Successfully switched to context: %v\n", ctx.contextName)
 	return nil
 }

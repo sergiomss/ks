@@ -1,14 +1,15 @@
 package cmd
 
 import (
-	"io"
 	"fmt"
+	"github.com/atotto/clipboard"
+	"io"
 	"path/filepath"
 	"sort"
 
+	usecli "github.com/sergiomss/ks/pkg/user"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	usecli "github.com/sergiomss/ks/pkg/user"
 
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
@@ -48,11 +49,6 @@ func newNamespaceCmd(out io.Writer) *cobra.Command {
 }
 
 func (ns *namespaceCmd) run() (error) {
-	config, err := ns.configAccess.GetStartingConfig()
-	if err != nil {
-		return err
-	}
-
 	kubeCfg, err := clientcmd.BuildConfigFromFlags("", ns.configPath)
 	if err != nil {
 		return err
@@ -68,6 +64,10 @@ func (ns *namespaceCmd) run() (error) {
 		return fmt.Errorf("failed to get namespace list: %v", err)
 	}
 
+	currentNs, err := getCurrentNamespace(ns.configAccess)
+	if err != nil {
+		return fmt.Errorf("failed to get current namespace: %v", err)
+	}
 	namespaces := getNamespaceNames(namespaceList)
 	sort.Strings(namespaces)
 
@@ -75,21 +75,48 @@ func (ns *namespaceCmd) run() (error) {
 		&survey.Select{
 			Message:  "Choose a namespace: ",
 			Options:  namespaces,
-			Default:  config.Contexts[config.CurrentContext].Namespace,
+			Default:  currentNs,
 			PageSize: len(namespaces),
 		})
 	if err != nil {
 		return err
 	}
 
-	config.Contexts[config.CurrentContext].Namespace = ns.namespace
-	err = clientcmd.ModifyConfig(ns.configAccess, *config, true)
+	err = setCurrentNamespace(ns.configAccess, ns.namespace)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to set current namespace to %v: %v", ns.namespace, err)
 	}
 
 	fmt.Fprintf(ns.out, "Successfully switched to namespace: %v\n", ns.namespace)
 	return nil
+}
+
+func getCurrentNamespace(access clientcmd.ConfigAccess) (string, error) {
+	config, err := access.GetStartingConfig()
+	if err != nil {
+		return "", err
+	}
+	return config.Contexts[config.CurrentContext].Namespace, nil
+}
+
+func setCurrentNamespace(access clientcmd.ConfigAccess, namespace string) error {
+	config, err := access.GetStartingConfig()
+	if err != nil {
+		return err
+	}
+	config.Contexts[config.CurrentContext].Namespace = namespace
+	err = clientcmd.ModifyConfig(access, *config, true)
+	if err != nil {
+		return err
+	}
+	if err := setTillerNamespace(namespace); err != nil {
+		return fmt.Errorf("failed to set tiller namespace: %v", err)
+	}
+	return nil
+}
+
+func setTillerNamespace(namespace string) error {
+	return clipboard.WriteAll(fmt.Sprintf("export TILLER_NAMESPACE=%v", namespace))
 }
 
 func getNamespaceNames(all *corev1.NamespaceList) []string {
