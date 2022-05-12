@@ -12,6 +12,7 @@ require (
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
+	github.com/mitchellh/gox v1.0.1 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.4.0
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
