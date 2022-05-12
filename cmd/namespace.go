@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
-	"github.com/atotto/clipboard"
 	"io"
 	"path/filepath"
 	"sort"
+
+	"github.com/atotto/clipboard"
 
 	usecli "github.com/sergiomss/ks/pkg/user"
 	corev1 "k8s.io/api/core/v1"
@@ -48,7 +50,9 @@ func newNamespaceCmd(out io.Writer) *cobra.Command {
 	return cmd
 }
 
-func (ns *namespaceCmd) run() (error) {
+func (ns *namespaceCmd) run() error {
+	ctx := context.Background()
+
 	kubeCfg, err := clientcmd.BuildConfigFromFlags("", ns.configPath)
 	if err != nil {
 		return err
@@ -59,7 +63,7 @@ func (ns *namespaceCmd) run() (error) {
 		return err
 	}
 
-	namespaceList, err := clientSet.CoreV1().Namespaces().List(metav1.ListOptions{})
+	namespaceList, err := clientSet.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to get namespace list: %v", err)
 	}

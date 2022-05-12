@@ -1,13 +1,14 @@
 package cmd
 
 import (
-	"io"
+	"context"
 	"fmt"
+	"io"
+	"os/user"
+	"path/filepath"
 	"sort"
 	"strings"
 	"time"
-	"os/user"
-	"path/filepath"
 
 	usecli "github.com/sergiomss/ks/pkg/user"
 	appsv1 "k8s.io/api/apps/v1"
@@ -50,7 +51,9 @@ func newRollDeploymentCmd(out io.Writer) *cobra.Command {
 	return cmd
 }
 
-func (rd *rollDeployCmd) run() (error) {
+func (rd *rollDeployCmd) run() error {
+	ctx := context.Background()
+
 	config, err := rd.configAccess.GetStartingConfig()
 	if err != nil {
 		return err
@@ -67,7 +70,7 @@ func (rd *rollDeployCmd) run() (error) {
 	}
 
 	deploymentsClient := clientSet.AppsV1().Deployments(config.Contexts[config.CurrentContext].Namespace)
-	deployList, err := deploymentsClient.List(metav1.ListOptions{})
+	deployList, err := deploymentsClient.List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to get deployment list: %v", err)
 	}
@@ -96,7 +99,7 @@ func (rd *rollDeployCmd) run() (error) {
 	}
 
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
-		result, getErr := deploymentsClient.Get(rd.deployName, metav1.GetOptions{})
+		result, getErr := deploymentsClient.Get(ctx, rd.deployName, metav1.GetOptions{})
 		if getErr != nil {
 			panic(fmt.Errorf("failed to get latest version of Deployment: %v", getErr))
 		}
@@ -119,7 +122,7 @@ func (rd *rollDeployCmd) run() (error) {
 
 		result.Spec.Template.ObjectMeta.Annotations = annotations
 
-		_, updateErr := deploymentsClient.Update(result)
+		_, updateErr := deploymentsClient.Update(ctx, result, metav1.UpdateOptions{})
 		return updateErr
 	})
 	if retryErr != nil {
