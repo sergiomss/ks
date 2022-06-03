@@ -4,12 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"sort"
+
 	"github.com/sergiomss/ks/pkg/user"
 	"github.com/spf13/cobra"
 	"gopkg.in/AlecAivazis/survey.v1"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
-	"sort"
 )
 
 type contextCmd struct {
@@ -65,13 +66,9 @@ func (ctx *contextCmd) run() error {
 		return err
 	}
 
-	ns, err := getCurrentNamespace(clientcmd.NewDefaultPathOptions())
+	_, err = getCurrentNamespace(clientcmd.NewDefaultPathOptions())
 	if err != nil {
 		return fmt.Errorf("failed to get current namespace: %v", err)
-	}
-	
-	if err := setTillerNamespace(ns); err != nil {
-		return fmt.Errorf("failed to set tiller namespace: %v", err)
 	}
 
 	fmt.Fprintf(ctx.out, "Successfully switched to context: %v\n", ctx.contextName)

@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/atotto/clipboard"
-
 	usecli "github.com/sergiomss/ks/pkg/user"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -113,14 +111,7 @@ func setCurrentNamespace(access clientcmd.ConfigAccess, namespace string) error 
 	if err != nil {
 		return err
 	}
-	if err := setTillerNamespace(namespace); err != nil {
-		return fmt.Errorf("failed to set tiller namespace: %v", err)
-	}
 	return nil
-}
-
-func setTillerNamespace(namespace string) error {
-	return clipboard.WriteAll(fmt.Sprintf("export TILLER_NAMESPACE=%v", namespace))
 }
 
 func getNamespaceNames(all *corev1.NamespaceList) []string {
