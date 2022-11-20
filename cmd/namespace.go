@@ -37,6 +37,9 @@ func newNamespaceCmd(out io.Writer) *cobra.Command {
 		Aliases: []string{"ns"},
 		Short:   "switch current namespace (alias: ns)",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if len(args) > 0 {
+				ns.namespace = args[0]
+			}
 			if home := homedir.HomeDir(); home != "" {
 				ns.configPath = filepath.Join(home, ".kube", "config")
 			} else {
@@ -71,25 +74,31 @@ func (ns *namespaceCmd) run() error {
 		return fmt.Errorf("failed to get current namespace: %v", err)
 	}
 	namespaces := getNamespaceNames(namespaceList)
-	sort.Strings(namespaces)
 
-	ns.namespace, err = usecli.Prompt(
-		&survey.Select{
-			Message:  "Choose a namespace: ",
-			Options:  namespaces,
-			Default:  currentNs,
-			PageSize: len(namespaces),
-		})
-	if err != nil {
-		return err
+	if ns.namespace == "" {
+		sort.Strings(namespaces)
+		ns.namespace, err = usecli.Prompt(
+			&survey.Select{
+				Message:  "Choose a namespace: ",
+				Options:  namespaces,
+				Default:  currentNs,
+				PageSize: len(namespaces),
+			})
+		if err != nil {
+			return err
+		}
+	}
+
+	if !contains(namespaces, ns.namespace) {
+		return fmt.Errorf("failed to set current namespace to '%v': namespace does not exist", ns.namespace)
 	}
 
 	err = setCurrentNamespace(ns.configAccess, ns.namespace)
 	if err != nil {
-		return fmt.Errorf("failed to set current namespace to %v: %v", ns.namespace, err)
+		return fmt.Errorf("failed to set current namespace to '%v': %v", ns.namespace, err)
 	}
 
-	fmt.Fprintf(ns.out, "Successfully switched to namespace: %v\n", ns.namespace)
+	fmt.Fprintf(ns.out, "Successfully switched to namespace: '%v'\n", ns.namespace)
 	return nil
 }
 
@@ -120,4 +129,13 @@ func getNamespaceNames(all *corev1.NamespaceList) []string {
 		list = append(list, namespace.Name)
 	}
 	return list
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }

@@ -30,6 +30,9 @@ func newContextCmd(out io.Writer) *cobra.Command {
 		Aliases: []string{"c"},
 		Short:   "switch current context (alias: c)",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if len(args) > 0 {
+				options.contextName = args[0]
+			}
 			return options.run()
 		},
 	}
@@ -43,16 +46,18 @@ func (ctx *contextCmd) run() error {
 		return err
 	}
 
-	ctxs := contexts(config)
-	ctx.contextName, err = user.Prompt(
-		&survey.Select{
-			Message:  "Choose a context: ",
-			Options:  ctxs,
-			Default:  config.CurrentContext,
-			PageSize: len(ctxs),
-		})
-	if err != nil {
-		return err
+	if ctx.contextName == "" {
+		ctxs := contexts(config)
+		ctx.contextName, err = user.Prompt(
+			&survey.Select{
+				Message:  "Choose a context: ",
+				Options:  ctxs,
+				Default:  config.CurrentContext,
+				PageSize: len(ctxs),
+			})
+		if err != nil {
+			return err
+		}
 	}
 
 	err = ctx.validate(config)
