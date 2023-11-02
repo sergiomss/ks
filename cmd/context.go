@@ -3,12 +3,10 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"io"
-	"sort"
-
 	"github.com/sergiomss/ks/pkg/user"
 	"github.com/spf13/cobra"
 	"gopkg.in/AlecAivazis/survey.v1"
+	"io"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
@@ -92,13 +90,4 @@ func (ctx *contextCmd) validate(config *clientcmdapi.Config) error {
 	}
 
 	return fmt.Errorf("no context exists with the name: %q", ctx.contextName)
-}
-
-func contexts(config *clientcmdapi.Config) []string {
-	list := make([]string, 0)
-	for name := range config.Contexts {
-		list = append(list, name)
-	}
-	sort.Strings(list)
-	return list
 }
