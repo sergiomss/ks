@@ -3,10 +3,11 @@ package main
 import "github.com/sergiomss/ks/cmd"
 
 var (
-	Version   string
-	BuildDate string
+	version string
+	date    string
+	commit  string
 )
 
 func main() {
-	cmd.Execute(Version, BuildDate)
+	cmd.Execute(version, date)
 }

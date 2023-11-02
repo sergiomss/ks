@@ -4,19 +4,18 @@ import (
 	"log"
 	"os"
 
-	"io/ioutil"
-	"strings"
-
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc/grpclog"
+	"io/ioutil"
 )
 
 var (
-	// Version contains the version of spade
+	// Version contains the version of ks
 	Version string
-	// BuildDate contains the build date of spade
+	// BuildDate contains the build date of ks
 	BuildDate string
+	// Commit contains the commit hash of ks
+	Commit string
 )
 
 func newRootCmd(args []string) *cobra.Command {
@@ -45,23 +44,12 @@ func init() {
 	grpclog.SetLogger(log.New(ioutil.Discard, "", log.LstdFlags))
 }
 
-func Execute(v, bd string) {
-	Version = v
-	BuildDate = bd
+func Execute(version, buildDate, commit string) {
+	Version = version
+	BuildDate = buildDate
+	Commit = commit
 	cmd := newRootCmd(os.Args[1:])
 	if err := cmd.Execute(); err != nil {
 		os.Exit(1)
 	}
-}
-
-func checkArgsLength(argsReceived int, requiredArgs ...string) error {
-	expectedNum := len(requiredArgs)
-	if argsReceived != expectedNum {
-		arg := "arguments"
-		if expectedNum == 1 {
-			arg = "argument"
-		}
-		return errors.Errorf("This command needs %v %s: %s", expectedNum, arg, strings.Join(requiredArgs, ", "))
-	}
-	return nil
 }

@@ -29,8 +29,9 @@ func newVersionCmd(out io.Writer) *cobra.Command {
 
 func (v *versionCmd) run() error {
 	table := uitable.New()
-	table.AddRow("VERSION", Version)
-	table.AddRow("BUILD_DATE", BuildDate)
+	table.AddRow("Version:", Version)
+	table.AddRow("BuildDate:", BuildDate)
+	table.AddRow("Commit:", Commit)
 	fmt.Fprintln(v.out, table)
 	return nil
 }
