@@ -9,5 +9,5 @@ var (
 )
 
 func main() {
-	cmd.Execute(version, date)
+	cmd.Execute(version, date, commit)
 }
